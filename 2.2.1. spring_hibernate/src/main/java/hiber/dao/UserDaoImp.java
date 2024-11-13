@@ -27,6 +27,9 @@ public class UserDaoImp implements UserDao {
       return query.getResultList();
    }
 
+   // Предполагается, что у разных юзеров могут быть авто с одинаковыми моделью и серией, но разными ID.
+   // Поэтому прямой поиск по модели и серии может выдать несколько юзеров.
+   // По этой причине поиск ведется по объекту Авто.
    @Override
    public User getUserByCar(Car car) {
       TypedQuery<User> query = sessionFactory.getCurrentSession().createQuery("from User where car=:car");

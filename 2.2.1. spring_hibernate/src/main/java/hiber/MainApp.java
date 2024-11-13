@@ -6,11 +6,10 @@ import hiber.model.User;
 import hiber.service.UserService;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public class MainApp {
-   public static void main(String[] args) throws SQLException {
+   public static void main(String[] args) {
       AnnotationConfigApplicationContext context = 
             new AnnotationConfigApplicationContext(AppConfig.class);
 
@@ -27,34 +26,26 @@ public class MainApp {
       Car car3 = new Car("model3", 3);
       Car car4 = new Car("model4", 4);
 
-      car1.setUser(user1);
-      car2.setUser(user2);
-      car3.setUser(user3);
-      car4.setUser(user4);
+      //Дополнительная машина, которая не присвоена никакому пользователю
+      Car car5 = new Car("model4", 4);
 
-      user1.setCar(car1);
-      user2.setCar(car2);
-      user3.setCar(car3);
-      user4.setCar(car4);
+      userService.add(user1.setCar(car1).setUser(user1));
+      userService.add(user2.setCar(car2).setUser(user2));
+      userService.add(user3.setCar(car3).setUser(user3));
+      userService.add(user4.setCar(car4).setUser(user4));
 
-      userService.add(user1);
-      userService.add(user2);
-      userService.add(user3);
-      userService.add(user4);
 
       List<User> users = userService.listUsers();
       for (User user : users) {
-         System.out.println("Id = "+user.getId());
-         System.out.println("First Name = "+user.getFirstName());
-         System.out.println("Last Name = "+user.getLastName());
-         System.out.println("Email = "+user.getEmail());
-         System.out.println("Car model = "+user.getCar().getModel());
-         System.out.println("Car series = "+user.getCar().getSeries());
-         System.out.println();
+         System.out.println(user);
       }
 
-      System.out.println(userService.getUserByCar(car1));
-
+      try {
+         System.out.println(userService.getUserByCar(car4));
+         System.out.println(userService.getUserByCar(car5));
+      } catch (IllegalStateException e) {
+         System.out.println("Пользователя не сущесвует");
+      }
       context.close();
    }
 }
